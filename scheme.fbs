@@ -1,0 +1,17 @@
+
+
+namespace messages;
+
+table letter {
+    id: int;
+    name: string;
+    text: string;
+}
+
+table Message {
+    secret: int;
+    time: int;
+    message: letter;
+}
+
+root_type Message;
