@@ -2,16 +2,10 @@
 
 namespace messages;
 
-table letter {
-    id: int;
+table Mess {
+    id: ulong;
     name: string;
-    text: string;
+    text:  string;
 }
 
-table Message {
-    secret: int;
-    time: int;
-    message: letter;
-}
-
-root_type Message;
+root_type Mess;
