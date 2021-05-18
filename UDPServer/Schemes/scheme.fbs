@@ -1,0 +1,11 @@
+
+
+namespace messages;
+
+table root_message {
+    type: int32;
+    time: ulong;
+    data: [ubyte];
+}
+
+root_type root_message;

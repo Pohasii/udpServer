@@ -6,6 +6,7 @@ table Mess {
     id: ulong;
     name: string;
     text:  string;
+    arr: [ubyte];
 }
 
 root_type Mess;

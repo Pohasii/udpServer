@@ -10,7 +10,7 @@ use std::sync::mpsc;
 use std::thread;
 // use serde::{Serialize, Deserialize};
 // use std::time::{Duration, SystemTime};
-use flatbuffers::FlatBufferBuilder;
+use flatbuffers::{FlatBufferBuilder, WIPOffset};
 use crate::scheme_generated::messages::{MessArgs, finish_mess_buffer, get_root_as_mess};
 use crate::scheme_generated::messages::Mess;
 
@@ -67,7 +67,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         let mut ready_message:Vec<u8> = Vec::new();
         // make message
-        make_mess(&mut builder, &mut ready_message, data.0, data.1, data.2);
+        make_mess(&mut builder, &mut ready_message, data.0, data.1, data.2, data.3);
 
         for user_addr in users.iter() {
             let adr = if status {&current_addr} else {&addr};
@@ -184,7 +184,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 // flatbuffers
 
-pub fn make_mess (builder: &mut FlatBufferBuilder, dest: &mut Vec<u8>, name: &str, id: u64, text: &str) {
+pub fn make_mess (builder: &mut FlatBufferBuilder, dest: &mut Vec<u8>, name: &str, id: u64, text: &str, arr: Vec<u8>) {
     //reset the previously data
     dest.clear();
 
@@ -194,6 +194,7 @@ pub fn make_mess (builder: &mut FlatBufferBuilder, dest: &mut Vec<u8>, name: &st
         name: Some(builder.create_string(name)),
         id,
         text: Some(builder.create_string(text)),
+        arr: Some(builder.create_vector(&arr)),
     };
 
     let mess_offset = Mess::create(builder, &args);
@@ -205,7 +206,7 @@ pub fn make_mess (builder: &mut FlatBufferBuilder, dest: &mut Vec<u8>, name: &st
     dest.extend_from_slice(finished_data);
 }
 
-pub fn read_mess (buf: &[u8]) -> (&str, u64, &str) {
+pub fn read_mess (buf: &[u8]) -> (&str, u64, &str, Vec<u8>) {
 
     //println!("{}", &buf.len());
     let message = get_root_as_mess(buf);
@@ -216,5 +217,7 @@ pub fn read_mess (buf: &[u8]) -> (&str, u64, &str) {
 
     let text = message.text().unwrap();
 
-    (name, id, text)
+    let arr = message.arr().unwrap();
+
+    (name, id, text, arr.to_vec())
 }
