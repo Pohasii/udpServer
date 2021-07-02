@@ -7,4 +7,6 @@ mod socket;
 mod listener;
 mod sender;
 mod inspector;
+mod client;
+mod general_types;
 
